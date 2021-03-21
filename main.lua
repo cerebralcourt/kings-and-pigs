@@ -3,6 +3,8 @@ local cartographer = require "lib.cartographer"
 local Camera = require "lib.brady"
 local Player = require "player"
 
+local world, tilemap, entry, exit, player, cam
+
 function createFixture(col)
   local x = col.x
   local y = col.y
@@ -48,6 +50,14 @@ function postSolve(a, b, coll, normalimpulse, tangentimpulse)
 
     if nx == 0 and ny == -1 then
       player.jumping = false
+
+      local dx, dy = player.body:getLinearVelocity()
+      
+      if math.abs(dx) < 0.1 then
+        player.anim = player.anims.idle
+      else
+        player.anim = player.anims.run
+      end
     end
   end
 end
@@ -82,7 +92,7 @@ end
 function love.update(dt)
   world:update(dt)
   tilemap:update(dt)
-  player:update()
+  player:update(dt)
   cam.translationX = player.body:getX() + player.width / 2
   cam.translationY = player.body:getY() + player.height / 2
   cam:update()
