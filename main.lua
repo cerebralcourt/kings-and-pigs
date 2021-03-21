@@ -2,8 +2,11 @@ require "lib.fun" ()
 local cartographer = require "lib.cartographer"
 local Camera = require "lib.brady"
 local Player = require "player"
+local Music = require "music"
 
-local world, tilemap, entry, exit, player, cam
+math.randomseed(os.time())
+
+local world, tilemap, entry, exit, player, cam, music
 
 function createFixture(col)
   local x = col.x
@@ -79,11 +82,13 @@ function love.load()
 
   player = Player(world, entry)
   cam = Camera(32 * 8, 32 * 6, { resizable = true, maintainAspectRatio = true })
+  music = Music()
 
   world:setCallbacks(beginContact, endContact, preSolve, postSolve)
 end
 
 function love.update(dt)
+  music:update(dt)
   world:update(dt)
   tilemap:update(dt)
   player:update(dt)

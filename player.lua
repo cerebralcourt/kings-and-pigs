@@ -60,72 +60,72 @@ return function(world, entry)
   function player:update(dt)
     input:update()
 
-    local dx, dy = player.body:getLinearVelocity()
+    local dx, dy = self.body:getLinearVelocity()
 
-    if player.attacktimeout > 0 then
+    if self.attacktimeout > 0 then
       dx = 0
       dy = 0
-      player.attacktimeout = player.attacktimeout - dt
+      self.attacktimeout = self.attacktimeout - dt
     else
-      if player.attacktimeout > -0.3 then
-        player.attacktimeout = player.attacktimeout - dt
+      if self.attacktimeout > -0.3 then
+        self.attacktimeout = self.attacktimeout - dt
       end
 
       if input:down("left") then
         dx = -64
-        player.dir = -1
+        self.dir = -1
       elseif input:down("right") then
         dx = 64
-        player.dir = 1
+        self.dir = 1
       else
         dx = 0
       end
 
-      if player.jumping then
+      if self.jumping then
         if dy < 0 then
-          player.anim = player.anims.jump
+          self.anim = self.anims.jump
         elseif dy > 0 then
-          player.anim = player.anims.fall
+          self.anim = self.anims.fall
         end
       else
         if input:down("jump") then
           dy = -150
-          player.jumping = true
+          self.jumping = true
         end
-        if player.groundtimeout <= 0 then
+        if self.groundtimeout <= 0 then
           if dx > 0 then
-            player.anim = player.anims.run
+            self.anim = self.anims.run
           elseif dx < 0 then
-            player.anim = player.anims.run
+            self.anim = self.anims.run
           else
-            player.anim = player.anims.idle
+            self.anim = self.anims.idle
           end
         else
-          player.groundtimeout = player.groundtimeout - dt
+          self.groundtimeout = self.groundtimeout - dt
         end
       end
 
-      if player.attacktimeout <= -0.3 and input:down("attack") then
-        player.attacktimeout = 0.25
-        player.anim = player.anims.attack
-        player.anim:gotoFrame(1)
+      if self.attacktimeout <= -0.3 and input:down("attack") then
+        self.attacktimeout = 0.25
+        self.anim = self.anims.attack
+        self.anim:gotoFrame(1)
       end
     end
 
-    player.body:setLinearVelocity(dx, dy)
+    self.body:setLinearVelocity(dx, dy)
 
-    player.anim:update(dt)
+    self.anim:update(dt)
   end
 
   function player:draw()
-    local x = player.body:getX() - player.width / 2 - 3.5
-    local y = player.body:getY() - player.height / 2 - 1
+    local x = self.body:getX() - self.width / 2 - 3.5
+    local y = self.body:getY() - self.height / 2 - 1
 
-    if player.dir == -1 then
-      x = x + player.spritewidth - player.width / 2
+    if self.dir == -1 then
+      x = x + self.spritewidth - self.width / 2
     end
 
-    player.anim:draw(player.image, x, y, 0, player.dir, 1)
+    self.anim:draw(self.image, x, y, 0, self.dir, 1)
   end
 
   return player
