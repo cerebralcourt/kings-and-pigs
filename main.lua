@@ -7,7 +7,17 @@ local Music = require "music"
 
 math.randomseed(os.time())
 
-local world, tilemap, entry, exit, player, cam, music, doorimage, entryanim, exitanim
+local world,
+      tilemap,
+      entry,
+      exit,
+      player,
+      cam,
+      music,
+      doorimage,
+      entryanim,
+      exitanim,
+      nextFrame
 
 function createFixture(col)
   local x = col.x
@@ -15,6 +25,11 @@ function createFixture(col)
 
   if col.height == 12 then
     y = y - 10
+  end
+
+  if col.height == 4 then
+    y = y - 14
+    x = x - 8
   end
 
   if col.width > col.height then
@@ -33,11 +48,32 @@ function createFixture(col)
 
   local body = love.physics.newBody(world, x, y)
   local shape = love.physics.newRectangleShape(col.width, col.height)
-  return love.physics.newFixture(body, shape)
+  local fixture = love.physics.newFixture(body, shape)
+  fixture:setFriction(0)
+  return fixture
 end
 
 function beginContact(a, b, coll)
-  
+  local fixture = nil
+  local x1, y1, x2, y2
+  if player.fixture == a then
+    fixture = b
+  elseif player.fixture == b then
+    fixture = a
+  end
+
+  if fixture then
+    if fixture:getCategory() == 2 then
+      local y1 = player.body:getY()
+      local y2 = fixture:getBody():getY()
+
+      if y1 < y2 then
+        nextFrame = function() fixture:setSensor(false) end
+      else
+        fixture:setSensor(true)
+      end
+    end
+  end
 end
 
 function endContact(a, b, coll)
@@ -77,8 +113,13 @@ function love.load()
   exit = objects("Exit")[1]
 
   for i, col in ipairs(tilemap.layers.Collisions.objects) do
+    createFixture(col)
+  end
+
+  for i, col in ipairs(tilemap.layers.Sensors.objects) do
     local fixture = createFixture(col)
-    fixture:setFriction(0)
+    fixture:setSensor(true)
+    fixture:setCategory(col.type or 1)
   end
 
   player = Player(world, entry, exit)
@@ -94,6 +135,11 @@ function love.load()
 end
 
 function love.update(dt)
+  if nextFrame then
+    nextFrame()
+    nextFrame = nil
+  end
+
   music:update(dt)
   world:update(dt)
   tilemap:update(dt)

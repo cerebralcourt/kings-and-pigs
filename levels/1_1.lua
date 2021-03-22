@@ -8,7 +8,7 @@ return {
   height = 6,
   tilewidth = 32,
   tileheight = 32,
-  nextobjectid = 61,
+  nextobjectid = 65,
   properties = {},
   tilesets = {
     {
@@ -110,7 +110,7 @@ return {
     {
       type = "objectgroup",
       name = "Objects",
-      visible = true,
+      visible = false,
       opacity = 1,
       offsetx = 0,
       offsety = 0,
@@ -252,7 +252,7 @@ return {
     {
       type = "objectgroup",
       name = "Collisions",
-      visible = true,
+      visible = false,
       opacity = 1,
       offsetx = 0,
       offsety = 0,
@@ -372,6 +372,44 @@ return {
           y = 96,
           width = 64,
           height = 12,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        }
+      }
+    },
+    {
+      type = "objectgroup",
+      name = "Sensors",
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      draworder = "topdown",
+      properties = {},
+      objects = {
+        {
+          id = 62,
+          name = "",
+          type = "2",
+          shape = "rectangle",
+          x = 256,
+          y = 128,
+          width = 32,
+          height = 4,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 63,
+          name = "",
+          type = "2",
+          shape = "rectangle",
+          x = 256,
+          y = 96,
+          width = 32,
+          height = 4,
           rotation = 0,
           visible = true,
           properties = {}
