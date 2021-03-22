@@ -1,7 +1,7 @@
 require "lib.fun" ()
 local Camera = require "lib.brady"
 local Music = require "music"
-local Screen = require "screen"
+local Level = require "screens.level"
 
 math.randomseed(os.time())
 
@@ -26,7 +26,7 @@ function love.load()
   screens = {
     levels = {
       {
-        Screen("1_1"),
+        Level("1_1"),
       },
     },
   }

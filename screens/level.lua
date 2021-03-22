@@ -1,6 +1,6 @@
-local cartographer = require "lib.cartographer"
-local anim8 = require "lib.anim8"
-local Player = require "player"
+local cartographer = require "../lib.cartographer"
+local anim8 = require "../lib.anim8"
+local Player = require "../player"
 
 local tilemap,
       entry,
@@ -82,7 +82,6 @@ local function postSolve(a, b, coll, normalimpulse, tangentimpulse)
 
     if nx == 0 and ny == -1 and player.anim ~= player.anims.exit then
       player.jumping = false
-      player.anim = player.anims.ground
       player.groundtimeout = 0.2
     end
   end

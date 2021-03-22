@@ -106,13 +106,17 @@ return function(world, entry, exit)
           end
           if self.groundtimeout <= 0 then
             if dx > 0 then
+              if self.anim ~= self.anims.run then self.anim:gotoFrame(1) end
               self.anim = self.anims.run
             elseif dx < 0 then
+              if self.anim ~= self.anims.run then self.anim:gotoFrame(1) end
               self.anim = self.anims.run
             else
+              if self.anim ~= self.anims.idle then self.anim:gotoFrame(1) end
               self.anim = self.anims.idle
             end
-          else
+          elseif not self.attacking then
+            self.anim = self.anims.ground
             self.groundtimeout = self.groundtimeout - dt
           end
         end
