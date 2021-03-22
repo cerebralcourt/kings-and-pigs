@@ -5,10 +5,10 @@ local Pig = require "entities.pig"
 
 local world,
       tilemap,
+      player,
       entry,
       exit,
       entities,
-      player,
       doorimage,
       entryanim,
       exitanim,
@@ -105,18 +105,6 @@ return function(name)
     exit = objects("Exit")[1]
     entities = {}
 
-    for i, obj in ipairs(objects("Pig")) do
-      table.insert(entities, Pig(world, obj))
-    end
-
-    -- for i, obj in ipairs(objects("Crate")) do
-    --   table.insert(entities, Crate(world, obj))
-    -- end
-
-    -- for i, obj in ipairs(objects("Bomb")) do
-    --   table.insert(entities, Bomb(world, obj))
-    -- end
-
     for i, col in ipairs(tilemap.layers.Collisions.objects) do
       createFixture(col)
     end
@@ -128,6 +116,18 @@ return function(name)
     end
 
     player = Player(world, entry, exit)
+
+    for i, obj in ipairs(objects("Pig")) do
+      table.insert(entities, Pig(world, player, obj))
+    end
+
+    -- for i, obj in ipairs(objects("Crate")) do
+    --   table.insert(entities, Crate(world, obj))
+    -- end
+
+    -- for i, obj in ipairs(objects("Bomb")) do
+    --   table.insert(entities, Bomb(world, obj))
+    -- end
 
     doorimage = love.graphics.newImage("assets/sprites/door.png")
     local doorg = anim8.newGrid(46, 56, doorimage:getWidth(), doorimage:getHeight())

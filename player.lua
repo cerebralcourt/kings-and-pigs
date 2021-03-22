@@ -1,6 +1,8 @@
 local baton = require "lib.baton"
 local anim8 = require "lib.anim8"
 
+local player
+
 local input = baton.new {
   controls = {
     left = {"key:left", "key:a", "axis:leftx-", "button:dpleft"},
@@ -23,7 +25,7 @@ return function(world, entry, exit)
   local shape = love.physics.newRectangleShape(width, height)
   local fixture = love.physics.newFixture(body, shape)
   fixture:setFriction(0)
-  fixture:setCategory(16)
+  fixture:setMask(3)
 
   local image = love.graphics.newImage("assets/sprites/king-hammer.png")
   local g = anim8.newGrid(spritewidth, spriteheight, image:getWidth(), image:getHeight())
