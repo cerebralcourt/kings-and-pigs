@@ -4,6 +4,7 @@ return function()
   local livebar
 
   local barimage = love.graphics.newImage("assets/sprites/livebar.png")
+
   local livesimage = love.graphics.newImage("assets/sprites/lives.png")
   local g = anim8.newGrid(18, 14, livesimage:getWidth(), livesimage:getHeight())
   local heart = anim8.newAnimation(g("1-8", 1), 0.1)
@@ -13,13 +14,22 @@ return function()
   }
   local diamond = anim8.newAnimation(g("1-8", 3), 0.1)
 
+  local numimage = love.graphics.newImage("assets/sprites/numbers.png")
+  local numg = anim8.newGrid(6, 8, numimage:getWidth(), numimage:getHeight())
+  local numbers = anim8.newAnimation(numg("1-10", 1), 0.1)
+  numbers:pause()
+  numbers:gotoFrame(10)
+
   livebar = {
     barimage = barimage,
     livesimage = livesimage,
+    numimage = numimage,
     heart = heart,
     hearthit = hearthit,
     diamond = diamond,
+    numbers = numbers,
     lives = 3,
+    diamonds = 0,
   }
 
   function livebar:update(dt)
@@ -29,6 +39,8 @@ return function()
     if self.hearthit.pos > 0 then
       self.hearthit.anim:update(dt)
     end
+    
+    self.numbers:update(dt)
   end
 
   function livebar:draw()
@@ -53,11 +65,29 @@ return function()
     elseif self.hearthit.pos == 3 then
       self.hearthit.anim:draw(self.livesimage, 65, 18, 0, scale, scale)
     end
+
+    local x, y = self.barimage:getWidth() - 28, self.barimage:getHeight() * 2 - 18
+    self.diamond:draw(self.livesimage, x, y, 0, scale, scale)
+    self.numbers:draw(self.numimage, x + 36, y + 4, 0, scale, scale)
   end
 
   function livebar:hit()
     self.hearthit.pos = self.lives
   	self.lives = self.lives - 1
+  end
+
+  function livebar:addHeart()
+    self.lives = self.lives + 1
+  end
+
+  function livebar:addDiamond()
+    self.diamonds = self.diamonds + 1
+    if self.diamonds == 10 then
+      self.diamonds = 0
+      self.numbers:gotoFrame(10)
+    else
+      self.numbers:gotoFrame(self.diamonds)
+    end
   end
 
   return livebar
