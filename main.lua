@@ -1,5 +1,4 @@
 require "lib.fun" ()
-local Camera = require "lib.brady"
 local Music = require "music"
 local Level = require "screens.level"
 
@@ -19,7 +18,6 @@ function love.load()
   love.graphics.setDefaultFilter("nearest", "nearest")
   love.graphics.setLineWidth(3)
 
-  cam = Camera(32 * 8, 32 * 6, { resizable = true, maintainAspectRatio = true })
   music = Music()
   screens = {
     levels = {
@@ -35,10 +33,6 @@ end
 function love.update(dt)
   music:update(dt)
   screen:update(dt)
-
-  cam.translationX = screen:getX()
-  cam.translationY = screen:getY()
-  cam:update()
 end
 
 function love.mousepressed(x, y, button)
@@ -67,7 +61,5 @@ end
 
 function love.draw()
   love.graphics.clear(63 / 255, 56 / 255, 81 / 255)
-  cam:push()
   screen:draw()
-  cam:pop()
 end

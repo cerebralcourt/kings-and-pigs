@@ -1,11 +1,15 @@
 local cartographer = require "lib.cartographer"
+local Camera = require "lib.brady"
 local anim8 = require "lib.anim8"
 local Player = require "player"
+local Livebar = require "livebar"
 local Pig = require "entities.pig"
 
 local world,
       tilemap,
+      cam,
       player,
+      livebar,
       entry,
       exit,
       entities,
@@ -81,6 +85,7 @@ local function beginContact(a, b, coll)
       end
 
       player:hit(nx)
+      livebar:hit()
     end
   else
     local entity = nil
@@ -151,6 +156,7 @@ return function(name)
   function screen:init(screens, changeScreen)
     world = love.physics.newWorld(0, 9.81 * 32)
   	tilemap = cartographer.load("levels/" .. name .. ".lua")
+    cam = Camera(32 * 8, 32 * 6, { resizable = true, maintainAspectRatio = true })
 
     local function objects(name)
       return totable(filter(function(obj) return obj.name == name end, tilemap.layers.Objects.objects))
@@ -171,6 +177,7 @@ return function(name)
     end
 
     player = Player(world, entry, exit)
+    livebar = Livebar()
 
     for i, obj in ipairs(objects("Pig")) do
       table.insert(entities, Pig(world, player, obj, entities))
@@ -218,9 +225,17 @@ return function(name)
     if player.anim == player.anims.exit then
       exitanim:update(dt)
     end
+
+    livebar:update(dt)
+
+    cam.translationX = player.body:getX() + player.width / 2
+    cam.translationY = player.body:getY() + player.height / 2
+    cam:update()
   end
 
   function screen:draw()
+    cam:push()
+
     tilemap:draw()
 
     if entryanim then
@@ -236,19 +251,15 @@ return function(name)
     end
 
     player:draw()
+
+    cam:pop()
+
+    livebar:draw()
   end
 
   function screen:clean()
     world:destroy()
     entities = {}
-  end
-
-  function screen:getX()
-    return player.body:getX() + player.width / 2
-  end
-
-  function screen:getY()
-    return player.body:getY() + player.height / 2
   end
 
   function screen:isdead()
