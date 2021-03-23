@@ -67,60 +67,67 @@ return function(world, player, obj, entities)
   }
 
   function pig:update(dt)
-    local x, y = self.body:getX(), self.body:getY()
-  	local pdx, pdy = player.body:getLinearVelocity()
-  	local xdist = player.body:getX() - x
-  	local ydist = player.body:getY() - y
+    if not player.dead then
+      local x, y = self.body:getX(), self.body:getY()
+    	local pdx, pdy = player.body:getLinearVelocity()
+    	local xdist = player.body:getX() - x
+    	local ydist = player.body:getY() - y
 
-    if not self.attacking and not self.damaged then
-      if self.attack then
-        self.attack:destroy()
-        self.attack = nil
-      end
+      if not self.attacking and not self.damaged then
+        if self.attack then
+          self.attack:destroy()
+          self.attack = nil
+        end
 
-      if self.attacktimeout > 0 then
-        self.attacktimeout = self.attacktimeout - dt
-      end
+        if self.attacktimeout > 0 then
+          self.attacktimeout = self.attacktimeout - dt
+        end
 
-      local dx, dy = self.body:getLinearVelocity()
-    	if self.type == "normal" then
-        if math.abs(xdist) < 24 and math.abs(ydist) < 10 then
-          dx = 0
-          dy = 0
+        local dx, dy = self.body:getLinearVelocity()
+      	if self.type == "normal" then
+          if math.abs(xdist) < 24 and math.abs(ydist) < 10 then
+            dx = 0
+            dy = 0
 
-          if self.attacktimeout <= 0 then
-            self.anim = self.anims.normal.attack
-            self.anim:gotoFrame(1)
-            self.attacking = true
+            if self.attacktimeout <= 0 then
+              self.anim = self.anims.normal.attack
+              self.anim:gotoFrame(1)
+              self.attacking = true
 
+              if xdist < 0 then
+                self.dir = -1
+              else
+                self.dir = 1
+              end
+
+              local body = love.physics.newBody(world, x + 4 * self.dir, y, "static")
+              local shape = love.physics.newRectangleShape(16, 16)
+              local fixture = love.physics.newFixture(body, shape)
+              fixture:setSensor(true)
+              fixture:setCategory(15)
+              self.attack = fixture
+            end
+      	  elseif math.abs(xdist) < 128 and math.abs(ydist) < 10 then
+      	  	self.anim = self.anims.normal.run
             if xdist < 0 then
               self.dir = -1
             else
               self.dir = 1
             end
-
-            local body = love.physics.newBody(world, x + 4 * self.dir, y, "static")
-            local shape = love.physics.newRectangleShape(16, 16)
-            local fixture = love.physics.newFixture(body, shape)
-            fixture:setSensor(true)
-            fixture:setCategory(15)
-            self.attack = fixture
+            dx = self.dir * 50
+      	  else
+            self.anim = self.anims.normal.idle
+            dx = 0.001
           end
-    	  elseif math.abs(xdist) < 128 and math.abs(ydist) < 10 then
-    	  	self.anim = self.anims.normal.run
-          if xdist < 0 then
-            self.dir = -1
-          else
-            self.dir = 1
-          end
-          dx = self.dir * 50
-    	  else
-          self.anim = self.anims.normal.idle
-          dx = 0.001
-        end
-    	end
+      	end
 
-      self.body:setLinearVelocity(dx, dy)
+        self.body:setLinearVelocity(dx, dy)
+      end
+    else
+      if not self.attacking then
+        self.anim = self.anims.normal.idle
+        self.body:setLinearVelocity(0, 0)
+      end
     end
 
   	self.anim:update(dt)

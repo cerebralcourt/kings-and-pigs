@@ -251,5 +251,9 @@ return function(name)
     return player.body:getY() + player.height / 2
   end
 
+  function screen:isdead()
+    return player.dead
+  end
+
   return screen
 end

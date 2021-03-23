@@ -41,6 +41,30 @@ function love.update(dt)
   cam:update()
 end
 
+function love.mousepressed(x, y, button)
+  if screen:isdead() then
+    changeScreen(screens.levels[1][1])
+  end
+end
+
+function love.keypressed(key, scancode, isrepeat)
+  if screen:isdead() then
+    changeScreen(screens.levels[1][1])
+  end
+end
+
+function love.gamepadpressed(joystick, button)
+  if screen:isdead() then
+    changeScreen(screens.levels[1][1])
+  end
+end
+
+function love.joystickpressed(joystick, button)
+  if screen:isdead() then
+    changeScreen(screens.levels[1][1])
+  end
+end
+
 function love.draw()
   love.graphics.clear(63 / 255, 56 / 255, 81 / 255)
   cam:push()

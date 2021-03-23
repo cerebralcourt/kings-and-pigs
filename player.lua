@@ -47,8 +47,16 @@ return function(world, entry, exit)
         player.anim:pauseAtEnd()
         player.damaged = false
         player.anim:resume()
+        if player.lives == 0 then
+          player.anim = player.anims.dead
+          player.dead = true
+        end
       end),
-    dead = anim8.newAnimation(g("1-4", 8), 0.1),
+    dead = anim8.newAnimation(g("1-4", 8), 0.1,
+      function()
+        player.anim:pauseAtEnd()
+        player:kill()
+      end),
     exit = anim8.newAnimation(g("1-8", 9), 0.1, function() player.anim:pauseAtEnd() end),
     enter = anim8.newAnimation(g("1-8", 10), 0.1,
       function()
@@ -78,14 +86,20 @@ return function(world, entry, exit)
     entering = true,
     damaged = false,
     attack = nil,
+    dead = false,
   }
 
   function player:update(dt)
     input:update()
 
-    if not self.entering and not self.damaged then
-      local dx, dy = self.body:getLinearVelocity()
+    local dx, dy = self.body:getLinearVelocity()
 
+    if self.dead then
+      if math.abs(dy) < 0.1 then
+        dx = 0
+      end
+      self.body:setLinearVelocity(dx, dy)
+    elseif not self.entering and not self.damaged then
       if self.attacking then
         dx = 0
         dy = 0
@@ -184,13 +198,20 @@ return function(world, entry, exit)
   end
 
   function player:hit(nx)
-    if not self.damaged then
+    if not self.damaged and not self.dead then
       self.damaged = true
+      self.attacking = false
+      self.lives = self.lives - 1
       self.body:setLinearVelocity(nx * 100, -50)
       self.anim = self.anims.hit
       self.anim:gotoFrame(1)
-      self.attacking = false
-      self.lives = self.lives - 1
+    end
+  end
+
+  function player:kill()
+    if self.attack then
+      self.attack:destroy()
+      self.attack = nil
     end
   end
 
